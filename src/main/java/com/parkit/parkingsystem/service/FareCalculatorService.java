@@ -35,12 +35,16 @@ public class FareCalculatorService {
             default: throw new IllegalArgumentException("Unkown Parking Type");
         }
         
-        //Calcul Of ticket Price 
-        double result= rate*ratio;
         
-        //Arround Price and Set it in ticket
-		ticket.setPrice(result);
+        if (ratio <= 0.5) {
+			ticket.setPrice(0);
+		}else {
+			//Calcul Of ticket Price 
+			double result= rate*ratio;
         
+			//Arround Price and Set it in ticket
+			ticket.setPrice(result);
+		}
         
     }
 }
