@@ -45,6 +45,11 @@ public class ParkingService {
                 ticket.setInTime(inTime);
                 ticket.setOutTime(null);
                 ticketDAO.saveTicket(ticket);
+                
+                //Test if is a reccurring user
+                if (ticketDAO.isUserRecurring(vehicleRegNumber)) {
+                	System.out.println("Welcome back! As usual user, you get benefit of 5% discount!");
+                }
                 System.out.println("Generated Ticket and saved in DB");
                 System.out.println("Please park your vehicle in spot number:"+parkingSpot.getId());
                 System.out.println("Recorded in-time for vehicle number:"+vehicleRegNumber+" is:"+inTime);
@@ -107,7 +112,16 @@ public class ParkingService {
             Ticket ticket = ticketDAO.getTicket(vehicleRegNumber);
             
             ticket.setOutTime(outTime);
+            
+            
+            if (ticketDAO.isUserRecurring(vehicleRegNumber)) {
+            	
+            	
+            	fareCalculatorService.setReccuringUser(true);
+            }
             fareCalculatorService.calculateFare(ticket);
+            fareCalculatorService.setReccuringUser(false);
+            
             if(ticketDAO.updateTicket(ticket)) {
                 ParkingSpot parkingSpot = ticket.getParkingSpot();
                 parkingSpot.setAvailable(true);

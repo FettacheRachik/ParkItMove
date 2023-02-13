@@ -10,6 +10,8 @@ import static org.mockito.Mockito.when;
 
 import java.util.Date;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -37,6 +39,7 @@ public class ParkingDataBaseIT {
     private static ParkingSpotDAO parkingSpotDAO;
     private static TicketDAO ticketDAO;
     private static DataBasePrepareService dataBasePrepareService;
+    private static final Logger logger = LogManager.getLogger("App");
 
     @Mock
     private static InputReaderUtil inputReaderUtil;
@@ -93,22 +96,32 @@ public class ParkingDataBaseIT {
         ParkingService parkingService = new ParkingService(inputReaderUtil, parkingSpotDAO, ticketDAO);
         
         long outTime = ticketIntime.getInTime().getTime()+ 60*60*1000;
-        
+        //For reccuring
+        boolean isReccurring=ticketDAO.isUserRecurring(numberOfVehicle);
         //when 
         parkingService.processExitingVehicle(new Date(outTime));
         
-        //then
+        
         Ticket ticket = ticketDAO.getTicket(numberOfVehicle);
+        
+        System.out.println("recurring " + isReccurring);
                 
        // check that the fare generated and out time are populated correctly in the database
         assertNotNull(ticket);
         assertNotNull(ticket.getOutTime());
-        assertEquals(1.5,ticket.getPrice());
+        assertEquals(isReccurring ?1.425:1.5,Math.round(ticket.getPrice() * 1000.0)/1000.0);
+
         assertEquals(outTime,ticket.getOutTime().getTime());
 
         
         
     
+    }
+    
+    @Test
+    public void testCarExitRecurringUser() {
+    	testParkingLotExit();
+    	testParkingLotExit();
     }
 
 }
