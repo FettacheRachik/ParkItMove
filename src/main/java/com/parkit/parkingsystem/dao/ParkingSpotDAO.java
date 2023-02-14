@@ -10,12 +10,20 @@ import org.apache.logging.log4j.Logger;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-
+/**
+ * 
+ * @author moi
+ *
+ */
 public class ParkingSpotDAO {
     private static final Logger logger = LogManager.getLogger("ParkingSpotDAO");
 
     public DataBaseConfig dataBaseConfig = new DataBaseConfig();
-
+    /**
+     * Get the next available slot to park a vehicle
+     * @param parkingType
+     * @return
+     */
     public int getNextAvailableSlot(ParkingType parkingType){
         Connection con = null;
         int result=-1;
@@ -37,6 +45,11 @@ public class ParkingSpotDAO {
         return result;
     }
 
+    /**
+     * Update parking slot 
+     * @param parkingSpot
+     * @return
+     */
     public boolean updateParking(ParkingSpot parkingSpot){
         //update the availability fo that parking slot
         Connection con = null;

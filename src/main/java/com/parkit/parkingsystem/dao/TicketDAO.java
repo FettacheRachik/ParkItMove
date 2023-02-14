@@ -12,13 +12,22 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
-
+/**
+ * Data Access Object to tickets
+ * @author moi
+ *
+ */
 public class TicketDAO {
 
     private static final Logger logger = LogManager.getLogger("TicketDAO");
 
     public DataBaseConfig dataBaseConfig = new DataBaseConfig();
-
+    
+    /**
+     * Save a ticket in dataBase
+     * @param ticket
+     * @return
+     */
     public boolean saveTicket(Ticket ticket){
         Connection con = null;
         try {
@@ -40,6 +49,11 @@ public class TicketDAO {
         }
     }
 
+    /**
+     * Get ticket from Db with vehicle Immatriculation
+     * @param vehicleRegNumber
+     * @return
+     */
     public Ticket getTicket(String vehicleRegNumber) {
         Connection con = null;
         Ticket ticket = null;
@@ -69,6 +83,11 @@ public class TicketDAO {
         }
     }
 
+    /**
+     * Update ticket to database 
+     * @param ticket
+     * @return
+     */
     public boolean updateTicket(Ticket ticket) {
         Connection con = null;
         try {
@@ -85,5 +104,30 @@ public class TicketDAO {
             dataBaseConfig.closeConnection(con);
         }
         return false;
+    }
+    
+    /**
+     * Method to know the vehicle is Reccuring
+     * @param vehicleRegNumber
+     * @return
+     */
+    public boolean isUserRecurring (String vehicleRegNumber) {
+    	Connection con = null;
+    	boolean isRecurringUser=false;
+        try {
+            con = dataBaseConfig.getConnection();
+            
+            PreparedStatement ps=con.prepareStatement(DBConstants.IS_RECURRING_USER);
+            ps.setString(1, vehicleRegNumber);
+            ResultSet rs = ps.executeQuery();
+            rs.next();
+            int count=rs.getInt("recordCount");
+            if (count>0) isRecurringUser=true;
+        }catch (Exception ex){
+            logger.error("Error saving ticket info",ex);
+        }finally {
+            dataBaseConfig.closeConnection(con);
+        }
+        return isRecurringUser;
     }
 }

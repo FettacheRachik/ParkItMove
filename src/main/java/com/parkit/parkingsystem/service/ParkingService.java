@@ -45,6 +45,11 @@ public class ParkingService {
                 ticket.setInTime(inTime);
                 ticket.setOutTime(null);
                 ticketDAO.saveTicket(ticket);
+                
+                //Test if is a reccurring user
+                if (ticketDAO.isUserRecurring(vehicleRegNumber)) {
+                	System.out.println("Welcome back! As usual user, you get benefit of 5% discount!");
+                }
                 System.out.println("Generated Ticket and saved in DB");
                 System.out.println("Please park your vehicle in spot number:"+parkingSpot.getId());
                 System.out.println("Recorded in-time for vehicle number:"+vehicleRegNumber+" is:"+inTime);
@@ -59,7 +64,7 @@ public class ParkingService {
         return inputReaderUtil.readVehicleRegistrationNumber();
     }
 
-    public ParkingSpot getNextParkingNumberIfAvailable(){
+    public ParkingSpot getNextParkingNumberIfAvailable() throws Exception{
         int parkingNumber=0;
         ParkingSpot parkingSpot = null;
         try{
@@ -72,9 +77,8 @@ public class ParkingService {
             }
         }catch(IllegalArgumentException ie){
             logger.error("Error parsing user input for type of vehicle", ie);
-        }catch(Exception e){
-            logger.error("Error fetching next available parking slot", e);
         }
+        
         return parkingSpot;
     }
 
@@ -96,14 +100,27 @@ public class ParkingService {
             }
         }
     }
-
+    
     public void processExitingVehicle() {
+    	processExitingVehicle(new Date());
+    }
+
+    public void processExitingVehicle(Date outTime) {
         try{
             String vehicleRegNumber = getVehichleRegNumber();
             Ticket ticket = ticketDAO.getTicket(vehicleRegNumber);
-            Date outTime = new Date();
+            
             ticket.setOutTime(outTime);
+            
+            
+            if (ticketDAO.isUserRecurring(vehicleRegNumber)) {
+            	
+            	
+            	fareCalculatorService.setReccuringUser(true);
+            }
             fareCalculatorService.calculateFare(ticket);
+            fareCalculatorService.setReccuringUser(false);
+            
             if(ticketDAO.updateTicket(ticket)) {
                 ParkingSpot parkingSpot = ticket.getParkingSpot();
                 parkingSpot.setAvailable(true);
