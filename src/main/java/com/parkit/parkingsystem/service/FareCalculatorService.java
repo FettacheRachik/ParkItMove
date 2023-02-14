@@ -26,6 +26,10 @@ public class FareCalculatorService {
 	public void setReccuringUser(boolean isReccuringUser) {
 		this.isReccuringUser = isReccuringUser;
 	}
+	/**
+	 * Calculate Fare ticket
+	 * @param ticket
+	 */
 
 	public void calculateFare(Ticket ticket){
         if( (ticket.getOutTime() == null) || (ticket.getOutTime().before(ticket.getInTime())) ){

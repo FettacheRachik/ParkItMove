@@ -12,13 +12,22 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Timestamp;
-
+/**
+ * Data Access Object to tickets
+ * @author moi
+ *
+ */
 public class TicketDAO {
 
     private static final Logger logger = LogManager.getLogger("TicketDAO");
 
     public DataBaseConfig dataBaseConfig = new DataBaseConfig();
-
+    
+    /**
+     * Save a ticket in dataBase
+     * @param ticket
+     * @return
+     */
     public boolean saveTicket(Ticket ticket){
         Connection con = null;
         try {
@@ -40,6 +49,11 @@ public class TicketDAO {
         }
     }
 
+    /**
+     * Get ticket from Db with vehicle Immatriculation
+     * @param vehicleRegNumber
+     * @return
+     */
     public Ticket getTicket(String vehicleRegNumber) {
         Connection con = null;
         Ticket ticket = null;
@@ -69,6 +83,11 @@ public class TicketDAO {
         }
     }
 
+    /**
+     * Update ticket to database 
+     * @param ticket
+     * @return
+     */
     public boolean updateTicket(Ticket ticket) {
         Connection con = null;
         try {
